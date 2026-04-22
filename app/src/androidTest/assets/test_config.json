@@ -1,0 +1,8 @@
+{
+  "username": "standard_user",
+  "password": "secret_sauce",
+  "firstName": "Daniel",
+  "lastName": "Fabian",
+  "postalCode": "90210",
+  "expectedCompletionTitle": "THANK YOU FOR YOU ORDER"
+}
