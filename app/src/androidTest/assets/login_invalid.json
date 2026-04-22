@@ -1,0 +1,5 @@
+{
+  "username": "standard_user",
+  "password": "bad_password",
+  "expectedErrorMessage": "Username and password do not match any user in this service"
+}
