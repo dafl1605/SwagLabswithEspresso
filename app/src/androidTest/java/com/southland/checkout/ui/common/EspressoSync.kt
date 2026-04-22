@@ -20,4 +20,10 @@ object EspressoSync {
             "No apareció texto '$text' en $timeoutMs ms"
         }
     }
+
+    fun waitForTextContains(text: String, timeoutMs: Long = 10_000) {
+        check(device.wait(Until.hasObject(By.textContains(text)), timeoutMs)) {
+            "No apareció texto que contenga '$text' en $timeoutMs ms"
+        }
+    }
 }

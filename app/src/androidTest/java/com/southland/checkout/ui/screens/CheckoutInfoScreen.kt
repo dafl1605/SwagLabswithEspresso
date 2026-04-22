@@ -27,6 +27,7 @@ class CheckoutInfoScreen {
     }
 
     fun assertErrorMessage(expected: String): CheckoutInfoScreen {
+        EspressoSync.waitForTextContains(expected)
         checkNotNull(device.findObject(By.textContains(expected))) {
             "No se encontró el error de checkout esperado '$expected'"
         }
