@@ -1,0 +1,6 @@
+{
+  "firstName": "",
+  "lastName": "",
+  "postalCode": "",
+  "expectedErrorMessage": "First Name is required"
+}
