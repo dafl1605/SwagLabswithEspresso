@@ -26,4 +26,17 @@ class CheckoutInfoScreen {
         checkNotNull(device.findObject(By.desc(Locators.CheckoutInfo.CONTINUE_BUTTON))) { "No se encontró botón CONTINUE" }.click()
         return this
     }
+
+    fun assertErrorMessage(expected: String): CheckoutInfoScreen {
+        EspressoSync.waitForTextContains(expected)
+        checkNotNull(device.findObject(By.textContains(expected))) {
+            "No se encontró el error de checkout esperado '$expected'"
+        }
+        return this
+    }
+
+    fun assertStillOnInfo(): CheckoutInfoScreen {
+        EspressoSync.waitForDesc(Locators.CheckoutInfo.SCREEN)
+        return this
+    }
 }

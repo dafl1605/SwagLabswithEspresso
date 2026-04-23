@@ -25,8 +25,24 @@ class LoginScreen {
             device.findObject(By.desc(Locators.Login.USERNAME))?.text = username
             device.findObject(By.desc(Locators.Login.PASSWORD))?.text = password
             checkNotNull(device.findObject(By.desc(Locators.Login.LOGIN_BUTTON))) { "No se encontró botón LOGIN" }.click()
-            EspressoSync.waitForDesc(Locators.Catalog.SCREEN)
         }
+        return this
+    }
+
+    fun assertErrorMessage(expected: String): LoginScreen {
+        checkNotNull(device.findObject(By.textContains(expected))) {
+            "No se encontró el error de login esperado '$expected'"
+        }
+        return this
+    }
+
+    fun assertStillOnLogin(): LoginScreen {
+        EspressoSync.waitForDesc(Locators.Login.SCREEN)
+        return this
+    }
+
+    fun assertLoggedIn(): LoginScreen {
+        EspressoSync.waitForDesc(Locators.Catalog.SCREEN)
         return this
     }
 }

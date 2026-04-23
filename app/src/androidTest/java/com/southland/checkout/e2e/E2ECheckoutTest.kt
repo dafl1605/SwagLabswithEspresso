@@ -31,17 +31,53 @@ class E2ECheckoutTest {
     }
 
     @Test
-    fun checkoutHappyPath_standardUser() {
-        val config = TestConfigLoader.load()
+    fun loginInvalidCredentials_showsExpectedError() {
+        val config = TestConfigLoader.loadInvalidLogin()
 
         loginScreen.waitReady()
             .login(config.username, config.password)
+            .assertStillOnLogin()
+            .assertErrorMessage(config.expectedErrorMessage)
+    }
+
+    @Test
+    fun checkoutInfoRequiredFieldsEmpty_blocksContinue() {
+        val login = TestConfigLoader.loadCheckoutHappyPath()
+        val requiredFields = TestConfigLoader.loadRequiredFields()
+
+        loginScreen.waitReady()
+            .login(login.username, login.password)
+            .assertLoggedIn()
 
         catalogScreen.waitReady()
             .addFirstVisibleProductToCart()
             .openCart()
 
         cartScreen.waitReady()
+            .assertHasItems()
+            .checkout()
+
+        infoScreen.waitReady()
+            .fillData(requiredFields.firstName, requiredFields.lastName, requiredFields.postalCode)
+            .continueCheckout()
+            .assertStillOnInfo()
+            .assertErrorMessage(requiredFields.expectedErrorMessage)
+    }
+
+    @Test
+    fun checkoutHappyPath_standardUser() {
+        val config = TestConfigLoader.loadCheckoutHappyPath()
+
+        loginScreen.waitReady()
+            .login(config.username, config.password)
+            .assertLoggedIn()
+
+        catalogScreen.waitReady()
+            .addFirstVisibleProductToCart()
+            .openCart()
+
+        cartScreen.waitReady()
+            .assertHasItems()
             .checkout()
 
         infoScreen.waitReady()

@@ -23,6 +23,7 @@ object Locators {
     object Cart {
         const val SCREEN = "test-Cart Content"
         const val CHECKOUT_BUTTON = "test-CHECKOUT"
+        const val ITEM_DESC_CONTAINS = "test-Item"
     }
 
     object CheckoutInfo {

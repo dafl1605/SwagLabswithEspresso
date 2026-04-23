@@ -15,6 +15,13 @@ class CartScreen {
         return this
     }
 
+    fun assertHasItems(): CartScreen {
+        checkNotNull(device.findObject(By.descContains(Locators.Cart.ITEM_DESC_CONTAINS))) {
+            "El carrito está vacío; no se encontró ningún item antes de checkout"
+        }
+        return this
+    }
+
     fun checkout(): CartScreen {
         checkNotNull(device.findObject(By.desc(Locators.Cart.CHECKOUT_BUTTON))) { "No se encontró botón CHECKOUT" }.click()
         return this
