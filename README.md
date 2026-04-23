@@ -11,8 +11,10 @@ Automate an end-to-end checkout flow:
 
 - JDK 17+
 - Android SDK configured (`ANDROID_HOME` or `ANDROID_SDK_ROOT`)
-- A device visible in `adb devices` (use its `device_id` as the script parameter; `emulator-5554` is only an example)
-- Target APK installed: `com.swaglabsmobileapp`
+- [adb](https://developer.android.com/tools/adb) on your `PATH`
+- [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) — required by `scripts/run-tests.sh`
+- A device or emulator visible in `adb devices` in state `device` (pass its id to the script; default is `emulator-5554`)
+- Target app installed: package `com.swaglabsmobileapp` (Sauce Labs / Swag Labs APK)
 
 ## Framework structure
 
@@ -61,21 +63,56 @@ Locators are centralized in these Screen Objects:
 - Use controlled fallback only during version transitions (`id -> content-desc -> text`) with logs.
 - If the UI contract fails, block promotion until Screen Objects are updated.
 
-## CLI execution
+## How to run the tests
+
+Run all commands from the project root `SwagLabswithEspresso` so `./gradlew` (or the wrapper) resolves correctly.
+
+### 1. Environment
+
+- Set `ANDROID_HOME` or `ANDROID_SDK_ROOT` to your Android SDK.
+- Ensure `adb` works: `adb devices` — you should see your emulator or USB device with status `device`.
+
+### 2. Install the app under test
+
+The instrumentation tests drive the **installed** Swag Labs app, not a build from this repo. Install the official APK (e.g. from Sauce Labs) on the same device/emulator you will use for tests:
+
+```bash
+adb -s <device_id> install -r /path/to/SwagLabs.apk
+```
+
+Confirm the package is present:
+
+```bash
+adb -s <device_id> shell pm list packages | rg swaglabs
+```
+
+### 3. Run the E2E suite (recommended)
+
+The script checks that the device is connected, that `com.swaglabsmobileapp` is installed, then runs `E2ECheckoutTest` only.
 
 ```bash
 cd SwagLabswithEspresso
 chmod +x scripts/run-tests.sh
-./scripts/run-tests.sh <device_id>
+./scripts/run-tests.sh              # default device: emulator-5554
+./scripts/run-tests.sh emulator-5556   # or pass another id from `adb devices`
 ```
 
-Direct alternative:
+### 4. Same task without the script (Gradle)
+
+From `SwagLabswithEspresso`:
 
 ```bash
-./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.southland.checkout.e2e.E2ECheckoutTest
+./gradlew :app:connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=com.southland.checkout.e2e.E2ECheckoutTest
 ```
 
-AndroidTest report:
+- If the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) is in the repo (`gradlew` + `gradle/wrapper/`), use `./gradlew` as above.
+- If `gradlew` is missing, install Gradle locally and use `gradle` with the same task, or generate the wrapper once with `gradle wrapper` and commit the wrapper files for reproducible runs on other machines.
+
+### 5. Reports
+
+After a run, open the HTML report:
+
 `app/build/reports/androidTests/connected/debug/index.html`
 
 ## Challenge assumptions and notes
